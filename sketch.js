@@ -9,9 +9,9 @@ let flock = [];
 let separationWeight = 1.5;
 let alignmentWeight = 1.0;
 let cohesionWeight = 1.0;
+let boidCount = 200; // Now a variable, not a constant
 
 // Constants
-const BOID_COUNT = 200;
 const MAX_SPEED = 4;
 const MAX_FORCE = 0.15;
 const SEPARATION_RADIUS = 25;
@@ -359,23 +359,22 @@ class Boid {
  * Setup: Initialize the canvas and create the initial flock
  */
 function setup() {
-    // Create canvas (responsive to window size)
+    // Create full-screen canvas
     let container = document.getElementById('canvas-container');
-    let canvasWidth = min(800, windowWidth - 20);
-    let canvasHeight = 500;
-    let canvas = createCanvas(canvasWidth, canvasHeight);
+    let canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent('canvas-container');
 
     // Create initial flock with random positions
-    for (let i = 0; i < BOID_COUNT; i++) {
+    for (let i = 0; i < boidCount; i++) {
         flock.push(new Boid(random(width), random(height)));
     }
 
-    // Update boid count display
-    document.getElementById('boidCount').textContent = BOID_COUNT;
-
     // Setup slider event listeners
     setupSliderListeners();
+
+    // Log to console that personality system is running
+    console.log('✅ Cosmic Boids simulation loaded!');
+    console.log(`🐦 Created ${boidCount} unique boids with individual colors and shapes`);
 }
 
 /**
@@ -383,8 +382,8 @@ function setup() {
  * Update and display all boids
  */
 function draw() {
-    // Clear background with a slight transparency for motion blur effect
-    background(245, 245, 250);
+    // Clear background with cosmic darkness
+    background(10, 5, 20);
 
     // Update and display each boid
     for (let boid of flock) {
@@ -392,17 +391,35 @@ function draw() {
         boid.display();
     }
 
-    // Optional: Draw info text
-    fill(100);
+    // Optional: Draw FPS counter in top-right for performance monitoring
+    fill(150);
     textSize(12);
-    textAlign(LEFT);
-    text(`FPS: ${Math.round(frameRate())}`, 10, 20);
+    textAlign(RIGHT);
+    text(`FPS: ${Math.round(frameRate())}`, width - 20, 30);
 }
 
 /**
  * Setup slider event listeners for real-time control
  */
 function setupSliderListeners() {
+    // Boid count slider
+    document.getElementById('boidCountSlider').addEventListener('input', (e) => {
+        let newCount = parseInt(e.target.value);
+        document.getElementById('boidCountValue').textContent = newCount;
+
+        // Add or remove boids
+        if (newCount > boidCount) {
+            // Add boids
+            for (let i = boidCount; i < newCount; i++) {
+                flock.push(new Boid(random(width), random(height)));
+            }
+        } else if (newCount < boidCount) {
+            // Remove boids
+            flock = flock.slice(0, newCount);
+        }
+        boidCount = newCount;
+    });
+
     // Separation slider
     document.getElementById('separationSlider').addEventListener('input', (e) => {
         separationWeight = parseFloat(e.target.value);
@@ -423,11 +440,10 @@ function setupSliderListeners() {
 }
 
 /**
- * Handle window resize to make canvas responsive
+ * Handle window resize to make canvas fully responsive
  */
 function windowResized() {
-    // Optional: uncomment to make canvas responsive to window resize
-    // let container = document.getElementById('canvas-container');
-    // let canvasWidth = min(800, windowWidth - 20);
-    // resizeCanvas(canvasWidth, 500);
+    if (typeof windowWidth !== 'undefined' && typeof windowHeight !== 'undefined') {
+        resizeCanvas(windowWidth, windowHeight);
+    }
 }

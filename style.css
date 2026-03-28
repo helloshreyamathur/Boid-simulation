@@ -1,6 +1,6 @@
 /* ============================================================================
-   BOIDS SIMULATION - STYLESHEET
-   Clean, minimal styling for the interactive boids simulation
+   COSMIC FLOCKING BOIDS - FULL PAGE IMMERSIVE EXPERIENCE
+   Unearthly, galaxy-like aesthetic with glass morphism UI
    ============================================================================ */
 
 * {
@@ -9,97 +9,193 @@
     box-sizing: border-box;
 }
 
+/* ============================================================================
+   COSMIC BACKGROUND - Deep space with nebula effects
+   ============================================================================ */
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.container {
-    background: #1a1a2e;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(138, 43, 226, 0.2);
-    padding: 30px;
-    max-width: 850px;
     width: 100%;
-    border: 1px solid rgba(138, 43, 226, 0.3);
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+
+    /* Deep space gradient background */
+    background: radial-gradient(ellipse at 20% 50%, rgba(50, 20, 80, 0.8) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(20, 40, 80, 0.6) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(80, 30, 60, 0.5) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0015 0%, #1a0033 25%, #0d001a 50%, #1a0033 75%, #0a0015 100%);
+
+    background-attachment: fixed;
 }
 
-h1 {
-    text-align: center;
-    color: #e0e0ff;
-    margin-bottom: 10px;
-    font-size: 28px;
-    text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+/* Animated star particles */
+body::before {
+    content: '';
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(200, 150, 255, 0.8), rgba(0, 0, 0, 0)),
+        radial-gradient(2px 2px at 60px 70px, rgba(150, 200, 255, 0.6), rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 50px 50px, rgba(200, 200, 255, 0.7), rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 130px 80px, rgba(255, 150, 200, 0.5), rgba(0, 0, 0, 0)),
+        radial-gradient(2px 2px at 90px 10px, rgba(150, 255, 200, 0.6), rgba(0, 0, 0, 0));
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    animation: twinkleCosmic 15s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
 }
 
-.subtitle {
-    text-align: center;
-    color: #b0b0d8;
-    font-size: 14px;
-    margin-bottom: 25px;
+@keyframes twinkleCosmic {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.8;
+    }
 }
 
 /* ============================================================================
-   CANVAS CONTAINER
+   COSMIC TITLE - Large, bold, floating
+   ============================================================================ */
+
+.title-container {
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    text-align: center;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.cosmic-title {
+    font-size: 5vw;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: #e0d5ff;
+
+    /* Glass morphism effect */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(200, 150, 255, 0.2);
+    border-radius: 20px;
+    padding: 20px 40px;
+
+    /* Subtle glow */
+    text-shadow:
+        0 0 20px rgba(138, 43, 226, 0.6),
+        0 0 40px rgba(138, 43, 226, 0.3),
+        0 0 60px rgba(100, 150, 255, 0.2);
+
+    box-shadow:
+        inset 0 0 20px rgba(200, 150, 255, 0.1),
+        0 0 30px rgba(138, 43, 226, 0.2);
+
+    animation: cosmicPulse 4s ease-in-out infinite;
+}
+
+@keyframes cosmicPulse {
+    0%, 100% {
+        text-shadow:
+            0 0 20px rgba(138, 43, 226, 0.6),
+            0 0 40px rgba(138, 43, 226, 0.3),
+            0 0 60px rgba(100, 150, 255, 0.2);
+    }
+    50% {
+        text-shadow:
+            0 0 25px rgba(138, 43, 226, 0.8),
+            0 0 50px rgba(138, 43, 226, 0.5),
+            0 0 80px rgba(100, 150, 255, 0.3);
+    }
+}
+
+/* ============================================================================
+   CANVAS CONTAINER - Full screen
    ============================================================================ */
 
 #canvas-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(138, 43, 226, 0.15);
-    border: 1px solid rgba(138, 43, 226, 0.2);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
 }
 
 #canvas-container canvas {
     display: block;
+    width: 100%;
+    height: 100%;
 }
 
 /* ============================================================================
-   CONTROL PANEL - SLIDERS
+   FLOATING GLASS CONTROL PANEL - Bottom with glass morphism
    ============================================================================ */
 
 .control-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 25px;
-    padding: 20px;
-    background: #0f0f1e;
-    border-radius: 8px;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 900px;
+    padding: 25px 35px;
+    z-index: 200;
+
+    /* Glass morphism effect */
+    background: rgba(15, 15, 30, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(138, 43, 226, 0.2);
+    border-radius: 20px;
+
+    /* Subtle glow */
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(138, 43, 226, 0.05);
+
+    /* Grid layout for sliders */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 30px;
 }
 
 .control-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 label {
-    font-weight: 600;
+    font-weight: 700;
     color: #d8d8ff;
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    opacity: 0.9;
 }
+
+/* ============================================================================
+   SLIDER STYLING - Cosmic vibes
+   ============================================================================ */
 
 .slider {
     width: 100%;
     height: 6px;
-    background: #2a2a4a;
-    border-radius: 3px;
+    background: rgba(138, 43, 226, 0.2);
+    border-radius: 10px;
     outline: none;
     -webkit-appearance: none;
     appearance: none;
     cursor: pointer;
+    border: 1px solid rgba(138, 43, 226, 0.3);
 }
 
 /* Webkit browsers (Chrome, Safari, Edge) */
@@ -109,16 +205,20 @@ label {
     width: 18px;
     height: 18px;
     background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%);
-    border: 2px solid #e0e0ff;
+    border: 2px solid rgba(200, 150, 255, 0.8);
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
-    transition: transform 0.2s ease;
+    box-shadow:
+        0 0 10px rgba(138, 43, 226, 0.8),
+        0 0 20px rgba(138, 43, 226, 0.4);
+    transition: all 0.2s ease;
 }
 
 .slider::-webkit-slider-thumb:hover {
-    transform: scale(1.15);
-    box-shadow: 0 0 25px rgba(138, 43, 226, 0.9);
+    transform: scale(1.25);
+    box-shadow:
+        0 0 15px rgba(138, 43, 226, 1),
+        0 0 30px rgba(138, 43, 226, 0.6);
 }
 
 /* Firefox */
@@ -126,86 +226,95 @@ label {
     width: 18px;
     height: 18px;
     background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%);
-    border: 2px solid #e0e0ff;
+    border: 2px solid rgba(200, 150, 255, 0.8);
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
-    transition: transform 0.2s ease;
+    box-shadow:
+        0 0 10px rgba(138, 43, 226, 0.8),
+        0 0 20px rgba(138, 43, 226, 0.4);
+    transition: all 0.2s ease;
 }
 
 .slider::-moz-range-thumb:hover {
-    transform: scale(1.15);
-    box-shadow: 0 0 25px rgba(138, 43, 226, 0.9);
+    transform: scale(1.25);
+    box-shadow:
+        0 0 15px rgba(138, 43, 226, 1),
+        0 0 30px rgba(138, 43, 226, 0.6);
 }
 
-/* Firefox track styling */
 .slider::-moz-range-track {
     background: transparent;
     border: none;
 }
 
-/* Value display */
+/* ============================================================================
+   VALUE DISPLAY
+   ============================================================================ */
+
 .control-group span {
-    font-size: 12px;
+    font-size: 11px;
     color: #b08aff;
     font-weight: 600;
     text-align: center;
+    opacity: 0.8;
+    letterspacing: 0.5px;
 }
 
 /* ============================================================================
-   INFO SECTION
+   FOCUS STATES & ACCESSIBILITY
    ============================================================================ */
 
-.info {
-    background: rgba(138, 43, 226, 0.1);
-    border-left: 4px solid #8a2be2;
-    padding: 15px 20px;
-    border-radius: 6px;
-    font-size: 13px;
-    color: #d0d0e8;
-}
-
-.info p {
-    margin: 8px 0;
-}
-
-.info strong {
-    color: #b08aff;
+.slider:focus {
+    outline: 2px solid rgba(138, 43, 226, 0.5);
+    outline-offset: 2px;
 }
 
 /* ============================================================================
    RESPONSIVE DESIGN
    ============================================================================ */
 
+@media (max-width: 1200px) {
+    .control-panel {
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        padding: 20px 25px;
+    }
+
+    .cosmic-title {
+        font-size: 4vw;
+        padding: 15px 30px;
+    }
+}
+
 @media (max-width: 768px) {
-    .container {
-        padding: 20px;
+    .control-panel {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 15px 20px;
+        bottom: 15px;
+        width: 95%;
     }
 
-    h1 {
-        font-size: 24px;
+    .cosmic-title {
+        font-size: 3vw;
+        padding: 10px 20px;
+        top: 20px;
     }
 
+    label {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
     .control-panel {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 10px;
+        padding: 12px 15px;
     }
 
-    .info {
-        font-size: 12px;
+    .cosmic-title {
+        font-size: 2.5vw;
+        padding: 8px 15px;
     }
-}
-
-/* ============================================================================
-   ACCESSIBILITY
-   ============================================================================ */
-
-.slider:focus {
-    outline: 2px solid #8a2be2;
-    outline-offset: 2px;
-}
-
-/* Smooth animations */
-input[type="range"] {
-    transition: background-color 0.15s ease;
 }

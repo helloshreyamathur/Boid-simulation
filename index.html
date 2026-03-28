@@ -3,67 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boids Simulation</title>
+    <title>Flocking Boids - Cosmic Simulation</title>
     <link rel="stylesheet" href="style.css">
     <!-- Load p5.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Boids Flocking Simulation</h1>
-        <p class="subtitle">Watch the boids flock together! Adjust the sliders to control their behavior.</p>
+    <!-- Cosmic Title -->
+    <div class="title-container">
+        <h1 class="cosmic-title">FLOCKING BOIDS</h1>
+    </div>
 
-        <!-- Canvas will be created by p5.js -->
-        <div id="canvas-container"></div>
+    <!-- Canvas will be created by p5.js -->
+    <div id="canvas-container"></div>
 
-        <!-- Control Panel -->
-        <div class="control-panel">
-            <div class="control-group">
-                <label for="separationSlider">Separation Force</label>
-                <input
-                    type="range"
-                    id="separationSlider"
-                    min="0"
-                    max="2"
-                    step="0.1"
-                    value="1.5"
-                    class="slider"
-                >
-                <span id="separationValue">1.50</span>
-            </div>
-
-            <div class="control-group">
-                <label for="alignmentSlider">Alignment Force</label>
-                <input
-                    type="range"
-                    id="alignmentSlider"
-                    min="0"
-                    max="2"
-                    step="0.1"
-                    value="1.0"
-                    class="slider"
-                >
-                <span id="alignmentValue">1.00</span>
-            </div>
-
-            <div class="control-group">
-                <label for="cohesionSlider">Cohesion Force</label>
-                <input
-                    type="range"
-                    id="cohesionSlider"
-                    min="0"
-                    max="2"
-                    step="0.1"
-                    value="1.0"
-                    class="slider"
-                >
-                <span id="cohesionValue">1.00</span>
-            </div>
+    <!-- Floating Control Panel -->
+    <div class="control-panel">
+        <div class="control-group">
+            <label for="boidCountSlider">Boid Count</label>
+            <input
+                type="range"
+                id="boidCountSlider"
+                min="50"
+                max="500"
+                step="10"
+                value="200"
+                class="slider"
+            >
+            <span id="boidCountValue">200</span>
         </div>
 
-        <div class="info">
-            <p><strong>Boid Count:</strong> <span id="boidCount">0</span></p>
-            <p><strong>Tips:</strong> Adjust the sliders to see how each behavior affects the flock. Set sliders to 0 to disable a behavior.</p>
+        <div class="control-group">
+            <label for="separationSlider">Separation</label>
+            <input
+                type="range"
+                id="separationSlider"
+                min="0"
+                max="2"
+                step="0.1"
+                value="1.5"
+                class="slider"
+            >
+            <span id="separationValue">1.50</span>
+        </div>
+
+        <div class="control-group">
+            <label for="alignmentSlider">Alignment</label>
+            <input
+                type="range"
+                id="alignmentSlider"
+                min="0"
+                max="2"
+                step="0.1"
+                value="1.0"
+                class="slider"
+            >
+            <span id="alignmentValue">1.00</span>
+        </div>
+
+        <div class="control-group">
+            <label for="cohesionSlider">Cohesion</label>
+            <input
+                type="range"
+                id="cohesionSlider"
+                min="0"
+                max="2"
+                step="0.1"
+                value="1.0"
+                class="slider"
+            >
+            <span id="cohesionValue">1.00</span>
         </div>
     </div>
 
