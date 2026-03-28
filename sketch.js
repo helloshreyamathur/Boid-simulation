@@ -37,8 +37,8 @@ class Boid {
         // Random seed for this individual boid
         this.personality = random(10000);
 
-        // Size variation: subtle spread around base size (15-20% variation)
-        this.size = random(4.2, 5.8);
+        // Size variation: make boids BIGGER and more visible (8-12 pixels)
+        this.size = random(8, 12);
 
         // Color variation: hues within purple/blue range, subtle saturation shift
         // Base hue: 270-300 (purple to blue range)
@@ -240,25 +240,27 @@ class Boid {
     /**
      * Get the color for this boid with personality
      * Returns RGB color based on personality and current speed/state
+     * Colors are BRIGHTER for better visibility against dark background
      */
     getColorWithPersonality() {
-        // Base personality hue: map personality to purple/blue range (180-300 in hue)
-        // We'll use simple RGB mixing to create color variation
-        let personalityHue = 200 + (this.baseHue - 270) * 1.5; // Map to visible hue range
+        // Create base color in purple/blue range - HIGHER VALUES for visibility
+        let r = 180 + this.baseSaturation * 0.8;  // Reds: 185-210
+        let g = 130 + (this.shapeRoundness * 50); // Greens: 130-180 for variety
+        let b = 240 + (this.baseHue - 270) * 2;   // Blues: 240-290 capped at 255
 
-        // Create base color in purple/blue range
-        let r = 160 + this.baseSaturation * 0.5;  // Reds: 160-175
-        let g = 100 + (this.shapeRoundness * 30); // Greens: 100-130 for variety
-        let b = 220 + (this.baseHue - 270) * 1.5; // Blues: 220-250 for purple/blue
+        // Cap values at 255
+        r = min(255, r);
+        g = min(255, g);
+        b = min(255, b);
 
-        // Speed-responsive brightness: faster = brighter, slower = dimmer
+        // Speed-responsive brightness: faster = even brighter, slower = dimmer
         let speedFactor = this.velocity.mag() / MAX_SPEED; // 0 to 1
-        let speedMultiplier = 0.7 + speedFactor * 0.3; // 0.7 to 1.0
+        let speedMultiplier = 0.8 + speedFactor * 0.2; // 0.8 to 1.0 (less darkening)
 
-        // Apply glow intensity modulation
-        let glowIntensity = this.getGlowIntensity();
+        // Apply glow intensity modulation (much gentler)
+        let glowIntensity = this.getGlowIntensity(); // 0.7 to 1.0
 
-        // Combine all effects
+        // Combine all effects - BRIGHTER overall
         let finalR = r * speedMultiplier * glowIntensity;
         let finalG = g * speedMultiplier * glowIntensity;
         let finalB = b * speedMultiplier * glowIntensity;

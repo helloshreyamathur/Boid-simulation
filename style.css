@@ -19,6 +19,7 @@ body {
     height: 100vh;
     overflow: hidden;
     position: relative;
+    background: #000000;
 
     /* Deep space gradient background */
     background: radial-gradient(ellipse at 20% 50%, rgba(50, 20, 80, 0.8) 0%, transparent 50%),
