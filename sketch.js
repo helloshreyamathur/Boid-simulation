@@ -239,27 +239,31 @@ class Boid {
 
     /**
      * Get the color for this boid with personality
-     * Returns HSB color that varies by personality and current speed/state
-     * HSB allows for subtle hue/saturation shifts while keeping brightness consistent
+     * Returns RGB color based on personality and current speed/state
      */
     getColorWithPersonality() {
-        colorMode(HSB, 360, 100, 100, 1);
+        // Base personality hue: map personality to purple/blue range (180-300 in hue)
+        // We'll use simple RGB mixing to create color variation
+        let personalityHue = 200 + (this.baseHue - 270) * 1.5; // Map to visible hue range
 
-        // Base personality hue and saturation
-        let h = this.baseHue;
-        let s = this.baseSaturation;
+        // Create base color in purple/blue range
+        let r = 160 + this.baseSaturation * 0.5;  // Reds: 160-175
+        let g = 100 + (this.shapeRoundness * 30); // Greens: 100-130 for variety
+        let b = 220 + (this.baseHue - 270) * 1.5; // Blues: 220-250 for purple/blue
 
         // Speed-responsive brightness: faster = brighter, slower = dimmer
         let speedFactor = this.velocity.mag() / MAX_SPEED; // 0 to 1
-        let brightness = 55 + speedFactor * 25; // 55-80 range
+        let speedMultiplier = 0.7 + speedFactor * 0.3; // 0.7 to 1.0
 
         // Apply glow intensity modulation
         let glowIntensity = this.getGlowIntensity();
-        brightness = brightness * glowIntensity;
 
-        let c = color(h, s, brightness);
-        colorMode(RGB); // Reset to RGB for rest of drawing
-        return c;
+        // Combine all effects
+        let finalR = r * speedMultiplier * glowIntensity;
+        let finalG = g * speedMultiplier * glowIntensity;
+        let finalB = b * speedMultiplier * glowIntensity;
+
+        return color(finalR, finalG, finalB);
     }
 
     /**
@@ -277,30 +281,17 @@ class Boid {
         // Tip (front of boid, pointing in velocity direction)
         vertex(this.size * 1.2, 0);
 
-        // Top curve - creates organic, slightly asymmetrical wing/shoulder
+        // Top back curve
         bezierVertex(
-            this.size * 0.7, -this.size * 0.4 * roundness,  // Control point 1
-            this.size * 0.2, -this.size * 0.6 * roundness,  // Control point 2
-            -this.size * 0.8, -this.size * 0.6              // End point
+            this.size * 0.6, -this.size * 0.5 * roundness,  // Control point 1
+            -this.size * 0.3, -this.size * 0.7 * roundness, // Control point 2
+            -this.size * 0.9, -this.size * 0.5              // End point (top rear)
         );
 
-        // Bottom of back (left rear)
-        vertex(-this.size * 0.95, -this.size * 0.1);
-
-        // Bottom curve - mirrors top for symmetry but slightly shifted
+        // Bottom back curve (mirror of top)
         bezierVertex(
-            -this.size * 1.1, 0,                            // Control point 1
-            -this.size * 0.9, this.size * 0.2 * roundness,  // Control point 2
-            -this.size * 0.8, this.size * 0.6               // End point
-        );
-
-        // Top of back (right rear)
-        vertex(-this.size * 0.95, this.size * 0.1);
-
-        // Final curve back to tip
-        bezierVertex(
-            this.size * 0.2, this.size * 0.6 * roundness,   // Control point 1
-            this.size * 0.7, this.size * 0.4 * roundness,   // Control point 2
+            -this.size * 0.3, this.size * 0.7 * roundness,  // Control point 1
+            this.size * 0.6, this.size * 0.5 * roundness,   // Control point 2
             this.size * 1.2, 0                              // Back to tip
         );
 
