@@ -33,9 +33,24 @@ class Boid {
         this.velocity = createVector(random(-1, 1), random(-1, 1));
         this.acceleration = createVector(0, 0);
 
-        // Size and appearance
-        this.size = 5;
-        this.color = color(200, 100, 255);
+        // ===== PERSONALITY: Each boid gets a unique identity =====
+        // Random seed for this individual boid
+        this.personality = random(10000);
+
+        // Size variation: subtle spread around base size (15-20% variation)
+        this.size = random(4.2, 5.8);
+
+        // Color variation: hues within purple/blue range, subtle saturation shift
+        // Base hue: 270-300 (purple to blue range)
+        this.baseHue = 270 + noise(this.personality * 0.001) * 30;
+        this.baseSaturation = 65 + noise(this.personality * 0.002) * 15;
+
+        // Shape variation: affects how rounded vs pointed the boid is
+        // Values 0-1, used to modulate curves in drawing
+        this.shapeRoundness = noise(this.personality * 0.003);
+
+        // Animation phase: each boid has its own glow pulse timing
+        this.glowPhase = random(TWO_PI);
     }
 
     /**
@@ -212,26 +227,134 @@ class Boid {
     }
 
     /**
-     * Draw the boid as a small triangle pointing in the direction of velocity
+     * Get the current glow intensity for this boid
+     * Creates a calm, subtle pulse effect using sine wave
+     * Varies between 0.7 (dim) and 1.0 (full brightness)
+     */
+    getGlowIntensity() {
+        // Slow, calm pulse: roughly 3 second cycle
+        let pulseValue = sin(frameCount * 0.02 + this.glowPhase) * 0.15 + 0.85;
+        return constrain(pulseValue, 0.7, 1.0);
+    }
+
+    /**
+     * Get the color for this boid with personality
+     * Returns HSB color that varies by personality and current speed/state
+     * HSB allows for subtle hue/saturation shifts while keeping brightness consistent
+     */
+    getColorWithPersonality() {
+        colorMode(HSB, 360, 100, 100, 1);
+
+        // Base personality hue and saturation
+        let h = this.baseHue;
+        let s = this.baseSaturation;
+
+        // Speed-responsive brightness: faster = brighter, slower = dimmer
+        let speedFactor = this.velocity.mag() / MAX_SPEED; // 0 to 1
+        let brightness = 55 + speedFactor * 25; // 55-80 range
+
+        // Apply glow intensity modulation
+        let glowIntensity = this.getGlowIntensity();
+        brightness = brightness * glowIntensity;
+
+        let c = color(h, s, brightness);
+        colorMode(RGB); // Reset to RGB for rest of drawing
+        return c;
+    }
+
+    /**
+     * Draw an organic, soft shape for this boid
+     * Uses curves to create a hand-drawn, illustrative appearance
+     * Shape tapers from broader body to pointed tip
+     */
+    drawOrganicShape() {
+        // Vary shape based on personality: more rounded or more pointed
+        let roundness = 1 + this.shapeRoundness * 0.3; // 1.0 to 1.3 multiplier
+
+        // Define the boid shape using curves for organic feel
+        beginShape();
+
+        // Tip (front of boid, pointing in velocity direction)
+        vertex(this.size * 1.2, 0);
+
+        // Top curve - creates organic, slightly asymmetrical wing/shoulder
+        bezierVertex(
+            this.size * 0.7, -this.size * 0.4 * roundness,  // Control point 1
+            this.size * 0.2, -this.size * 0.6 * roundness,  // Control point 2
+            -this.size * 0.8, -this.size * 0.6              // End point
+        );
+
+        // Bottom of back (left rear)
+        vertex(-this.size * 0.95, -this.size * 0.1);
+
+        // Bottom curve - mirrors top for symmetry but slightly shifted
+        bezierVertex(
+            -this.size * 1.1, 0,                            // Control point 1
+            -this.size * 0.9, this.size * 0.2 * roundness,  // Control point 2
+            -this.size * 0.8, this.size * 0.6               // End point
+        );
+
+        // Top of back (right rear)
+        vertex(-this.size * 0.95, this.size * 0.1);
+
+        // Final curve back to tip
+        bezierVertex(
+            this.size * 0.2, this.size * 0.6 * roundness,   // Control point 1
+            this.size * 0.7, this.size * 0.4 * roundness,   // Control point 2
+            this.size * 1.2, 0                              // Back to tip
+        );
+
+        endShape(CLOSE);
+    }
+
+    /**
+     * Count how many neighbors are nearby (for visual feedback)
+     * Used to modulate appearance based on separation/cohesion behaviors
+     */
+    countNearbyNeighbors(boids) {
+        let count = 0;
+        let averageDistance = 0;
+
+        for (let other of boids) {
+            if (other === this) continue;
+
+            let distance = dist(this.position.x, this.position.y,
+                              other.position.x, other.position.y);
+
+            // Check if within any of the three behavior radii
+            if (distance < COHESION_RADIUS) {
+                count++;
+                averageDistance += distance;
+            }
+        }
+
+        return {
+            count: count,
+            avgDistance: count > 0 ? averageDistance / count : COHESION_RADIUS
+        };
+    }
+
+    /**
+     * Draw the boid with organic personality and visual feedback
+     * Combines calm glow animation with behavior-responsive coloring
      */
     display() {
         // Calculate angle based on velocity direction
         let angle = atan2(this.velocity.y, this.velocity.x);
 
+        // Get dynamic color based on personality, speed, and glow
+        let boidColor = this.getColorWithPersonality();
+
         push();
-        fill(this.color);
+        fill(boidColor);
         noStroke();
 
         // Translate to position and rotate to velocity direction
         translate(this.position.x, this.position.y);
         rotate(angle);
 
-        // Draw a triangle
-        triangle(
-            this.size, 0,           // Tip (front)
-            -this.size, -this.size, // Bottom left (back)
-            -this.size, this.size   // Bottom right (back)
-        );
+        // Draw the organic, curved shape
+        this.drawOrganicShape();
 
         pop();
     }
